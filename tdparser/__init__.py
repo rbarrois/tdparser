@@ -5,7 +5,7 @@ __version__ = '0.1.0'
 __author__ = u"Raphaël Barrois <raphael.barrois@polytechnique.org>"
 
 
-from .parser import (
+from .topdown import (
     Token, EndToken,
     LeftParen, RightParen,
 
