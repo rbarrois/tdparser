@@ -47,7 +47,7 @@ class Token(object):
         an expression.
 
         Returns:
-            _ConditionNode: the node representing this token
+            object: Parsed value for this token (a node, a value, ...)
         """
         raise NotImplementedError()
 
@@ -58,21 +58,26 @@ class Token(object):
         (at the left of the rest of the construct).
 
         Args:
-            context (_Parser): the parser from which 'next' data can be
+            context (Parser): the parser from which 'next' data can be
                 retrieved
-            left (_ConditionNode): the representation of the construct on the
+            left (object): the representation of the construct on the
                 left of this token
 
         Returns:
-            _ConditionNode built from this token, what is on its right, and
+            object built from this token, what is on its right, and
                 what was on its left.
         """
         raise NotImplementedError()
 
 
 class LeftParen(Token):
+    """A left parenthesis."""
+
     def nud(self, context):
+        # Fetch the next expression
         expr = context.expression()
+        # Eat the next token from the flow, and fail if it isn't a right
+        # parenthesis.
         context.advance(expect_class=RightParen)
         return expr
 
@@ -81,6 +86,7 @@ class LeftParen(Token):
 
 
 class RightParen(Token):
+    """A right parenthesis."""
     def __repr__(self):  # pragma: no cover
         return '<)>'
 

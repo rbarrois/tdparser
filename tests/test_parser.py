@@ -148,6 +148,8 @@ class ParserTestCase(unittest.TestCase):
             def nud(self, context):
                 return self.value
 
+        # Parsing:
+        # "( 4 + ( 1 + 2 * 3 * ( 4 + 5 ) + 6 ) ) * 7 + 8"
         e = [
             tdparser.LeftParen(),
             NumToken('4'),
