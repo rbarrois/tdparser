@@ -10,30 +10,37 @@ import unittest
 import tdparser
 
 
-class ParserTestCase(unittest.TestCase):
+class BaseParserTestCase(unittest.TestCase):
+    """Tests for basic aspects of the parser."""
     def test_tokens_required(self):
         self.assertRaises(ValueError, tdparser.Parser, [])
 
-    def test_advance_no_expect(self):
+    def test_consume_no_expect(self):
         l = tdparser.LeftParen('(')
         r = tdparser.RightParen(')')
         parser = tdparser.Parser([l, r])
-        next_token = parser.advance()
-        self.assertEqual(r, next_token)
+        current_token = parser.consume()
+        self.assertEqual(l, current_token)
+        self.assertEqual(r, parser.current_token)
 
-    def test_advance_expect_success(self):
+    def test_consume_expect_success(self):
         l = tdparser.LeftParen('(')
         r = tdparser.RightParen(')')
         parser = tdparser.Parser([l, r])
-        next_token = parser.advance(tdparser.LeftParen)
-        self.assertEqual(r, next_token)
+        current_token = parser.consume(tdparser.LeftParen)
+        self.assertEqual(l, current_token)
+        self.assertEqual(r, parser.current_token)
 
-    def test_advance_expect_fail(self):
+    def test_consume_expect_fail(self):
         l = tdparser.LeftParen('(')
         r = tdparser.RightParen(')')
         parser = tdparser.Parser([l, r])
         self.assertRaises(tdparser.ParserSyntaxError,
-            parser.advance, tdparser.RightParen)
+            parser.consume, tdparser.RightParen)
+
+class AdvancedParserTestCase(unittest.TestCase):
+    """Tests for the full parsing algorithm."""
+
 
     def test_expression_obeys_rbp(self):
         class AToken(tdparser.Token):

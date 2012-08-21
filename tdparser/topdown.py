@@ -97,7 +97,7 @@ class LeftParen(Token):
         expr = context.expression()
         # Eat the next token from the flow, and fail if it isn't a right
         # parenthesis.
-        context.advance(expect_class=self.match)
+        context.consume(expect_class=self.match)
         return expr
 
     def __repr__(self):  # pragma: no cover
@@ -142,11 +142,14 @@ class Parser(object):
                 self.current_pos)
         self.current_pos += 1
 
-    def advance(self, expect_class=None):
-        """Retrieve the next token.
+    def consume(self, expect_class=None):
+        """Retrieve the current token, then advance the parser.
 
-        If an expected class is provided, it will assert that the next token
+        If an expected class is provided, it will assert that the current token
         matches that class (is an instance).
+
+        Note that when calling a token's nud() or led() functions, the "current"
+        token is the token following the token whose method has been called.
 
         Returns:
             Token: the new current token.
@@ -155,8 +158,9 @@ class Parser(object):
             raise ParserSyntaxError("Unexpected token at %d: got %r, expected %s" % (
                 self.current_pos, self.current_token, expect_class.__name__))
 
+        current_token = self.current_token
         self._forward()
-        return self.current_token
+        return current_token
 
     def expression(self, rbp=0):
         """Extract an expression from the flow of tokens.
@@ -170,7 +174,7 @@ class Parser(object):
             Whatever the led/nud functions of tokens returned.
         """
         prev_token = self.current_token
-        self.advance()
+        self.consume()
 
         # Retrieve the value from the previous token situated at the
         # leftmost point in the expression
@@ -181,7 +185,7 @@ class Parser(object):
             # Those are tokens that prefer binding to the left of an expression
             # than to the right of an expression.
             prev_token = self.current_token
-            self.advance()
+            self.consume()
             left = prev_token.led(left, context=self)
 
         return left
