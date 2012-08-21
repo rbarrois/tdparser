@@ -40,18 +40,24 @@ class Token(object):
     def __repr__(self):
         return "<%s: %r>" % (self.__class__.__name__, self.text)
 
-    def nud(self):  # pragma: no cover
+    def nud(self, context):
         """Null denotation.
 
         Describes what happens to this token when located at the beginning of
         an expression.
 
+        Args:
+            context (Parser): the parser from which next tokens/subexpressions
+                can be retrieved
+
         Returns:
             object: Parsed value for this token (a node, a value, ...)
         """
-        raise NotImplementedError()
+        raise ParserSyntaxError(
+            "Unexpected token %s at the left of an expression (pos: %d)" % (
+            self, context.current_pos))
 
-    def led(self, left, context):  # pragma: no cover
+    def led(self, left, context):
         """Left denotation.
 
         Describe what happens to this token when appearing inside a construct
@@ -67,7 +73,9 @@ class Token(object):
             object built from this token, what is on its right, and
                 what was on its left.
         """
-        raise NotImplementedError()
+        raise ParserSyntaxError(
+            "Unexpected token %s in the middle of an expression (pos: %d)" % (
+            self, context.current_pos))
 
 
 class LeftParen(Token):
@@ -115,10 +123,19 @@ class Parser(object):
 
     def __init__(self, tokens):
         self.tokens = iter(tokens)
+        self.current_pos = 0
         try:
             self.current_token = next(self.tokens)
         except StopIteration:
             raise ValueError("No tokens provided.")
+
+    def _forward(self):
+        try:
+            self.current_token = next(self.tokens)
+        except StopIteration:
+            raise ParserSyntaxError("Unexpected end of token stream at %d." %
+                self.current_pos)
+        self.current_pos += 1
 
     def advance(self, expect_class=None):
         """Retrieve the next token.
@@ -130,13 +147,10 @@ class Parser(object):
             Token: the new current token.
         """
         if expect_class and not isinstance(self.current_token, expect_class):
-            raise ParserSyntaxError("Unexpected token: got %r, expected %s" % (
-                self.current_token, expect_class.__name__))
+            raise ParserSyntaxError("Unexpected token at %d: got %r, expected %s" % (
+                self.current_pos, self.current_token, expect_class.__name__))
 
-        try:
-            self.current_token = next(self.tokens)
-        except StopIteration:
-            raise ParserSyntaxError("Unexpected end of token stream.")
+        self._forward()
         return self.current_token
 
     def expression(self, rbp=0):
