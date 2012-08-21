@@ -149,7 +149,7 @@ class Parser(object):
         token is the token following the token whose method has been called.
 
         Returns:
-            Token: the new current token.
+            Token: the previous current token.
         """
         if expect_class and not isinstance(self.current_token, expect_class):
             raise ParserSyntaxError("Unexpected token at %d: got %r, expected %s" % (
