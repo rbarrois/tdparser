@@ -5,7 +5,7 @@
 """Tests for token-related code."""
 
 
-import unittest
+from .compat import unittest
 
 import tdparser
 

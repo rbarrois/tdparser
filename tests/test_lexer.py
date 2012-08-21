@@ -5,7 +5,7 @@
 """Tests for lexer-related code."""
 
 import re
-import unittest
+from .compat import unittest
 
 import tdparser
 
