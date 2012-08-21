@@ -170,8 +170,7 @@ class Parser(object):
         Returns:
             Whatever the led/nud functions of tokens returned.
         """
-        prev_token = self.current_token
-        self.consume()
+        prev_token = self.consume()
 
         # Retrieve the value from the previous token situated at the
         # leftmost point in the expression
@@ -181,8 +180,7 @@ class Parser(object):
             # Read incoming tokens with a higher 'left binding power'.
             # Those are tokens that prefer binding to the left of an expression
             # than to the right of an expression.
-            prev_token = self.current_token
-            self.consume()
+            prev_token = self.consume()
             left = prev_token.led(left, context=self)
 
         return left
