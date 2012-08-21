@@ -39,7 +39,7 @@ class Token(object):
     def __repr__(self):
         return "<%s: %r>" % (self.__class__.__name__, self.text)
 
-    def nud(self):
+    def nud(self):  # pragma: no cover
         """Null denotation.
 
         Describes what happens to this token when located at the beginning of
@@ -50,7 +50,7 @@ class Token(object):
         """
         raise NotImplementedError()
 
-    def led(self, left, context):
+    def led(self, left, context):  # pragma: no cover
         """Left denotation.
 
         Describe what happens to this token when appearing inside a construct
@@ -75,12 +75,12 @@ class LeftParen(Token):
         context.advance(expect_class=RightParen)
         return expr
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<(>'
 
 
 class RightParen(Token):
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '<)>'
 
 
