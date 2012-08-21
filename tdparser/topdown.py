@@ -95,6 +95,12 @@ class EndToken(Token):
     """Marks the end of the input."""
     lbp = 0
 
+    def nud(self, context):
+        raise ParserSyntaxError("Empty token flow.")
+
+    def led(self, left, context):
+        raise ParserSyntaxError("Unfinished token flow.")
+
     def __repr__(self):
         return '<End>'
 

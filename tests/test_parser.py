@@ -129,14 +129,58 @@ class ParserTestCase(unittest.TestCase):
         p = tdparser.Parser([tdparser.LeftParen(), tdparser.EndToken()])
         self.assertRaises(tdparser.ParserSyntaxError, p.parse)
 
+    def test_end_at_beginning(self):
+        class AToken(tdparser.Token):
+            def nud(self, context):
+                return 13
+
+        # Trying to parse "$ 13"
+        p = tdparser.Parser([tdparser.EndToken(), AToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+
+    def test_within_expression(self):
+        class AToken(tdparser.Token):
+            def nud(self, context):
+                return 13
+
+        # Trying to parse "13 $ 13"
+        p = tdparser.Parser([AToken(), tdparser.EndToken(), AToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, p.expression, -1)
+
+    def test_unfinished_expression(self):
+        # Introduce a couple of token types
+
+        class PlusToken(tdparser.Token):
+            lbp = 5
+            def led(self, left, context):
+                return left + context.expression(5)
+
+        class NumToken(tdparser.Token):
+            def __init__(self, text):
+                super(NumToken, self).__init__(text)
+                self.value = int(text)
+
+            def nud(self, context):
+                return self.value
+
+        # Trying to parse "1 +"
+        p = tdparser.Parser([
+            NumToken('1'),
+            PlusToken(),
+            tdparser.EndToken(),
+        ])
+        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+
     def test_nested_parenthesized_expression(self):
         class TimesToken(tdparser.Token):
             lbp = 10
+
             def led(self, left, context):
                 return left * context.expression(10)
 
         class PlusToken(tdparser.Token):
             lbp = 5
+
             def led(self, left, context):
                 return left + context.expression(5)
 
