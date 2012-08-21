@@ -207,25 +207,20 @@ class Lexer(object):
     - Otherwise, if the first character is either ' ' or '\t', skip it
     - Otherwise, raise a ValueError.
 
-    Class attributes:
-        TOKENS (list of (Token, regexp)): the list of tokens to try, in order.
-
     Attributes:
-        text (str): the text to lex and parse.
+        tokens (Token, re) list: The known tokens, as a (token class, regexp) list.
     """
 
-    TOKENS = (
-        (LeftParen, re.compile(r'\(')),
-        (RightParen, re.compile(r'\)')),
-    )
+    def __init__(self, default_tokens=True, *args, **kwargs):
+        self.tokens = []
+        if default_tokens:
+            self.register_token(LeftParen, re.compile(r'\('))
+            self.register_token(RightParen, re.compile(r'\)'))
 
-    def __init__(self, text, *args, **kwargs):
-        self.text = text
         super(Lexer, self).__init__(*args, **kwargs)
 
-    def _tokens(self):
-        """Expansion point to retrieve a list of valid tokens."""
-        return self.TOKENS
+    def register_token(self, token_class, regexp):
+        self.tokens.append((token_class, regexp))
 
     def _get_token(self, text):
         """Retrieve the next token from some text.
@@ -236,42 +231,43 @@ class Lexer(object):
         Returns:
             (token_kind, token_text): the token kind and its content.
         """
-        for (kind, regexp) in self._tokens():
+        for (kind, regexp) in self.tokens:
             match = regexp.match(text)
             if match:
                 return kind, match
         return None, None
 
-    def lex(self):
+    def lex(self, text):
         """Split self.text into a list of tokens.
 
-        Returns:
-            list of (str, str): the list of (token kind, token text) generated
-                from self.text.
+        Args:
+            text (str): text to parse
+
+        Yields:
+            Token: the tokens generated from the given text.
         """
-        text = self.text
-
-        tokens = []
-
         while text:
             token_class, match = self._get_token(text)
             if token_class:
                 matched_text = text[match.start():match.end()]
-                tokens.append((token_class(matched_text)))
+                yield token_class(matched_text)
                 text = text[match.end():]
             elif text[0] in (' ', '\t'):
                 text = text[1:]
             else:
                 raise ValueError('Invalid character %s in %s' % (text[0], text))
 
-        tokens.append(EndToken())
-        return tokens
+        yield EndToken()
 
-    def parse(self):
+    def parse(self, text):
         """Parse self.text.
+
+        Args:
+            text (str): the text to lex
 
         Returns:
             object: a node representing the current rule.
         """
-        parser = Parser(self.lex())
+        tokens = self.lex(text)
+        parser = Parser(tokens)
         return parser.parse()
