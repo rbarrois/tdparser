@@ -227,7 +227,7 @@ class Lexer(object):
         Returns:
             (token_kind, token_text): the token kind and its content.
         """
-        for (kind, regexp) in self.tokens:
+        for kind, regexp in self.tokens:
             match = regexp.match(text)
             if match:
                 return kind, match
@@ -244,7 +244,7 @@ class Lexer(object):
         """
         while text:
             token_class, match = self._get_token(text)
-            if token_class:
+            if token_class is not None:
                 matched_text = text[match.start():match.end()]
                 yield token_class(matched_text)
                 text = text[match.end():]

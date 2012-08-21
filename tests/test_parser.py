@@ -73,10 +73,9 @@ class BaseTokensTestCase(unittest.TestCase):
 
     def test_end_at_beginning(self):
         class AToken(tdparser.Token):
-            def nud(self, context):
-                return 13
+            pass
 
-        # Trying to parse "$ 13"
+        # Trying to parse "$ X"
         p = tdparser.Parser([tdparser.EndToken(), AToken()])
         self.assertRaises(tdparser.ParserSyntaxError, p.parse)
 
