@@ -15,32 +15,84 @@ class BaseParserTestCase(unittest.TestCase):
     def test_tokens_required(self):
         self.assertRaises(ValueError, tdparser.Parser, [])
 
+    def test_consume_invalid_first_token(self):
+        class SomeToken(tdparser.Token):
+            pass
+
+        parser = tdparser.Parser([SomeToken('foo'), tdparser.EndToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, parser.parse)
+
+    def test_consume_invalid_middle_token(self):
+        class NumToken(tdparser.Token):
+            lbp = 5
+            def __init__(self, text):
+                super(NumToken, self).__init__(text)
+                self.value = int(text)
+
+            def nud(self, context):
+                return self.value
+
+        parser = tdparser.Parser([NumToken('0'), NumToken('1'), tdparser.EndToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, parser.parse)
+
     def test_consume_no_expect(self):
-        l = tdparser.LeftParen('(')
-        r = tdparser.RightParen(')')
-        parser = tdparser.Parser([l, r])
+        a = tdparser.Token('a')
+        b = tdparser.Token('b')
+        parser = tdparser.Parser([a, b])
         current_token = parser.consume()
-        self.assertEqual(l, current_token)
-        self.assertEqual(r, parser.current_token)
+        self.assertEqual(a, current_token)
+        self.assertEqual(b, parser.current_token)
 
     def test_consume_expect_success(self):
-        l = tdparser.LeftParen('(')
-        r = tdparser.RightParen(')')
-        parser = tdparser.Parser([l, r])
-        current_token = parser.consume(tdparser.LeftParen)
-        self.assertEqual(l, current_token)
-        self.assertEqual(r, parser.current_token)
+        class SubToken(tdparser.Token):
+            pass
+
+        a = SubToken('a')
+        b = tdparser.Token('b')
+        parser = tdparser.Parser([a, b])
+        current_token = parser.consume(SubToken)
+        self.assertEqual(a, current_token)
+        self.assertEqual(b, parser.current_token)
 
     def test_consume_expect_fail(self):
-        l = tdparser.LeftParen('(')
-        r = tdparser.RightParen(')')
-        parser = tdparser.Parser([l, r])
-        self.assertRaises(tdparser.ParserSyntaxError,
-            parser.consume, tdparser.RightParen)
+        class SubToken(tdparser.Token):
+            pass
+
+        a = tdparser.Token('a')
+        b = SubToken('b')
+        parser = tdparser.Parser([a, b])
+        self.assertRaises(tdparser.ParserSyntaxError, parser.consume, SubToken)
+
+
+class BaseTokensTestCase(unittest.TestCase):
+    """Tests behavior of base tokens."""
+
+    def test_misparenthsized_expression(self):
+        p = tdparser.Parser([tdparser.LeftParen(), tdparser.EndToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+
+    def test_end_at_beginning(self):
+        class AToken(tdparser.Token):
+            def nud(self, context):
+                return 13
+
+        # Trying to parse "$ 13"
+        p = tdparser.Parser([tdparser.EndToken(), AToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+
+    def test_end_within_expression(self):
+        class AToken(tdparser.Token):
+            def nud(self, context):
+                return 13
+
+        # Trying to parse "13 $ 13"
+        p = tdparser.Parser([AToken(), tdparser.EndToken(), AToken()])
+        self.assertRaises(tdparser.ParserSyntaxError, p.expression, -1)
+
+
 
 class AdvancedParserTestCase(unittest.TestCase):
     """Tests for the full parsing algorithm."""
-
 
     def test_expression_obeys_rbp(self):
         class AToken(tdparser.Token):
@@ -131,28 +183,6 @@ class AdvancedParserTestCase(unittest.TestCase):
         res = p.parse()
         self.assertEqual(1, res)
         self.assertEqual(end, p.current_token)
-
-    def test_misparenthsized_expression(self):
-        p = tdparser.Parser([tdparser.LeftParen(), tdparser.EndToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
-
-    def test_end_at_beginning(self):
-        class AToken(tdparser.Token):
-            def nud(self, context):
-                return 13
-
-        # Trying to parse "$ 13"
-        p = tdparser.Parser([tdparser.EndToken(), AToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
-
-    def test_within_expression(self):
-        class AToken(tdparser.Token):
-            def nud(self, context):
-                return 13
-
-        # Trying to parse "13 $ 13"
-        p = tdparser.Parser([AToken(), tdparser.EndToken(), AToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.expression, -1)
 
     def test_unfinished_expression(self):
         # Introduce a couple of token types
