@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2010-2012 Raphaël Barrois
 
-"""Tests for token-related code."""
+"""Tests for lexer-related code."""
 
 import re
 import unittest

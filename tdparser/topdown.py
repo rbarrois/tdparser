@@ -206,8 +206,9 @@ class Lexer(object):
         tokens (Token, re) list: The known tokens, as a (token class, regexp) list.
     """
 
-    def __init__(self, default_tokens=True, *args, **kwargs):
+    def __init__(self, default_tokens=True, blank_chars=(' ', '\t'), *args, **kwargs):
         self.tokens = []
+        self.blank_chars = set(blank_chars)
         if default_tokens:
             self.register_token(LeftParen, re.compile(r'\('))
             self.register_token(RightParen, re.compile(r'\)'))
@@ -247,7 +248,7 @@ class Lexer(object):
                 matched_text = text[match.start():match.end()]
                 yield token_class(matched_text)
                 text = text[match.end():]
-            elif text[0] in (' ', '\t'):
+            elif text[0] in self.blank_chars:
                 text = text[1:]
             else:
                 raise ValueError('Invalid character %s in %s' % (text[0], text))
