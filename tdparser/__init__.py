@@ -11,5 +11,7 @@ from .topdown import (
 
     Parser,
     Lexer,
+
+    ParserError, ParserSyntaxError,
 )
 

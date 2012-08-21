@@ -13,6 +13,14 @@ In order to use it for parsing:
 import re
 
 
+class ParserError(Exception):
+    pass
+
+
+class ParserSyntaxError(ParserError):
+    pass
+
+
 class Token(object):
     """Base class for tokens.
 
@@ -90,21 +98,32 @@ class Parser(object):
     Attributes:
         tokens (iterable of Token): the tokens.
         current_token (Token): the current token
-        _cur_token (int): the index of the current token
     """
 
     def __init__(self, tokens):
-        self.tokens = tokens
-        self.current_token = self.tokens[0]
-        self._cur_token = 0
+        self.tokens = iter(tokens)
+        try:
+            self.current_token = next(self.tokens)
+        except StopIteration:
+            raise ValueError("No tokens provided.")
 
     def advance(self, expect_class=None):
-        """Retrieve the next token."""
-        if expect_class:
-            assert self.current_token.__class__ == expect_class
+        """Retrieve the next token.
 
-        self._cur_token += 1
-        self.current_token = self.tokens[self._cur_token]
+        If an expected class is provided, it will assert that the next token
+        matches that class (is an instance).
+
+        Returns:
+            Token: the new current token.
+        """
+        if expect_class and not isinstance(self.current_token, expect_class):
+            raise ParserSyntaxError("Unexpected token: got %r, expected %s" % (
+                self.current_token, expect_class.__name__))
+
+        try:
+            self.current_token = next(self.tokens)
+        except StopIteration:
+            raise ParserSyntaxError("Unexpected end of token stream.")
         return self.current_token
 
     def expression(self, rbp=0):
@@ -121,7 +140,7 @@ class Parser(object):
         prev_token = self.current_token
         self.advance()
 
-        # Retrieve the _ConditionNode from the previous token situated at the
+        # Retrieve the value from the previous token situated at the
         # leftmost point in the expression
         left = prev_token.nud(context=self)
 
