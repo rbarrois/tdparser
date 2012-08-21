@@ -83,9 +83,6 @@ class RightParen(Token):
     def __repr__(self):  # pragma: no cover
         return '<)>'
 
-    def nud(self, context):
-        raise ParserError("Empty parenthesized expression.")
-
 
 class LeftParen(Token):
     """A left parenthesis."""
