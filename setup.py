@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# Python3
+from __future__ import unicode_literals
+
 from setuptools import setup, find_packages
 import os
 import re
@@ -28,8 +31,8 @@ setup(
     version=get_version(PACKAGE),
     author="Raphaël Barrois",
     author_email="raphael.barrois@polytechnique.org",
-    description=(u"A very simple parsing library, based on the Top-Down "
-        u"algorithm."),
+    description=("A very simple parsing library, based on the Top-Down "
+        "algorithm."),
     license="MIT",
     keywords=['parser', 'lexer', 'token', 'topdown'],
     url="http://github.com/rbarrois/tdparser",
@@ -41,10 +44,12 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: BSD License",
+        "License :: OSI Approved :: MIT License",
         "Topic :: Software Development :: Libraries :: Python Modules",
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
     ],
     test_suite='tests',
 )

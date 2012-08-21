@@ -9,6 +9,7 @@ In order to use it for parsing:
 - Call MyLexer(my_text).parse()
 """
 
+from __future__ import unicode_literals
 
 import re
 
