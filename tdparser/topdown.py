@@ -78,25 +78,30 @@ class Token(object):
             self, context.current_pos))
 
 
+class RightParen(Token):
+    """A right parenthesis."""
+    def __repr__(self):  # pragma: no cover
+        return '<)>'
+
+    def nud(self, context):
+        raise ParserError("Empty parenthesized expression.")
+
+
 class LeftParen(Token):
     """A left parenthesis."""
+
+    match = RightParen
 
     def nud(self, context):
         # Fetch the next expression
         expr = context.expression()
         # Eat the next token from the flow, and fail if it isn't a right
         # parenthesis.
-        context.advance(expect_class=RightParen)
+        context.advance(expect_class=self.match)
         return expr
 
     def __repr__(self):  # pragma: no cover
         return '<(>'
-
-
-class RightParen(Token):
-    """A right parenthesis."""
-    def __repr__(self):  # pragma: no cover
-        return '<)>'
 
 
 class EndToken(Token):
