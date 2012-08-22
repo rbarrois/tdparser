@@ -36,17 +36,17 @@ class TokenRegistryTestCase(unittest.TestCase):
 
         registry = tdparser_lexer.TokenRegistry()
         self.assertEqual(0, len(registry._tokens))
+        self.assertEqual(0, len(registry))
 
-        a_re = re.compile(r'a+')
-        b_re = re.compile(r'b+')
-
-        registry.register(AToken, a_re)
+        registry.register(AToken, r'a+')
         self.assertEqual(1, len(registry._tokens))
-        self.assertEqual([(AToken, a_re)], registry._tokens)
+        self.assertEqual(1, len(registry))
+        self.assertEqual(AToken, registry._tokens[0][0])
 
-        registry.register(BToken, b_re)
+        registry.register(BToken, r'b+')
         self.assertEqual(2, len(registry._tokens))
-        self.assertEqual((BToken, b_re), registry._tokens[1])
+        self.assertEqual(2, len(registry))
+        self.assertEqual(BToken, registry._tokens[1][0])
 
     def test_dual_registration(self):
         class AToken(tdparser.Token):
@@ -54,17 +54,17 @@ class TokenRegistryTestCase(unittest.TestCase):
 
         registry = tdparser_lexer.TokenRegistry()
         self.assertEqual(0, len(registry._tokens))
+        self.assertEqual(0, len(registry))
 
-        a_re = re.compile(r'a+')
-        b_re = re.compile(r'b+')
-
-        registry.register(AToken, a_re)
+        registry.register(AToken, r'a+')
         self.assertEqual(1, len(registry._tokens))
-        self.assertEqual([(AToken, a_re)], registry._tokens)
+        self.assertEqual(1, len(registry))
+        self.assertEqual(AToken, registry._tokens[0][0])
 
-        registry.register(AToken, b_re)
+        registry.register(AToken, r'b+')
         self.assertEqual(2, len(registry._tokens))
-        self.assertEqual((AToken, b_re), registry._tokens[1])
+        self.assertEqual(2, len(registry))
+        self.assertEqual(AToken, registry._tokens[1][0])
 
     def test_get_matches_no_tokens_notext(self):
         registry = tdparser_lexer.TokenRegistry()
@@ -76,12 +76,12 @@ class TokenRegistryTestCase(unittest.TestCase):
 
     def test_get_matches_notext(self):
         registry = tdparser_lexer.TokenRegistry()
-        registry.register(tdparser.Token, re.compile(r'a'))
+        registry.register(tdparser.Token, r'a')
         self.assertEqual([], list(registry.matching_tokens('')))
 
     def test_get_matches(self):
         registry = tdparser_lexer.TokenRegistry()
-        registry.register(tdparser.Token, re.compile(r'a'))
+        registry.register(tdparser.Token, r'a')
 
         matches = list(registry.matching_tokens('aaa'))
         self.assertEqual(1, len(matches))
@@ -95,8 +95,8 @@ class TokenRegistryTestCase(unittest.TestCase):
             pass
 
         registry = tdparser_lexer.TokenRegistry()
-        registry.register(AToken, re.compile(r'a'))
-        registry.register(AAToken, re.compile(r'aa'))
+        registry.register(AToken, r'a')
+        registry.register(AAToken, r'aa')
 
         matches = list(registry.matching_tokens('aaa'))
         self.assertEqual(2, len(matches))
@@ -111,8 +111,8 @@ class TokenRegistryTestCase(unittest.TestCase):
             pass
 
         registry = tdparser_lexer.TokenRegistry()
-        registry.register(AToken, re.compile(r'a'))
-        registry.register(AAToken, re.compile(r'aa'))
+        registry.register(AToken, r'a')
+        registry.register(AAToken, r'aa')
 
         match = registry.get_token('aaa')
         self.assertEqual(AAToken, match[0])
@@ -125,8 +125,8 @@ class TokenRegistryTestCase(unittest.TestCase):
             pass
 
         registry = tdparser_lexer.TokenRegistry()
-        registry.register(AAToken, re.compile(r'aa'))
-        registry.register(AToken, re.compile(r'a'))
+        registry.register(AAToken, r'aa')
+        registry.register(AToken, r'a')
 
         match = registry.get_token('aaa')
         self.assertEqual(AAToken, match[0])
@@ -184,11 +184,74 @@ class GetTokenTestCase(unittest.TestCase):
         class BToken(tdparser.Token):
             pass
 
-        lexer.register_token(AToken, re.compile(r'a'))
-        lexer.register_token(BToken, re.compile(r'aa'))
+        lexer.register_token(AToken, r'a')
+        lexer.register_token(BToken, r'aa')
 
         token_class, match = lexer.tokens.get_token('aaa')
         self.assertEqual(BToken, token_class)
+
+
+class RegisterTokensTestCase(unittest.TestCase):
+    """Tests for Lexer.register_token / Lexer.register_tokens."""
+
+    def test_register_token(self):
+        class Token(tdparser.Token):
+            pass
+
+        lexer = tdparser.Lexer()
+        self.assertEqual(0, len(lexer.tokens))
+
+        lexer.register_token(Token, r'a')
+        self.assertEqual(1, len(lexer.tokens))
+
+    def test_register_token_re(self):
+        class Token(tdparser.Token):
+            regexp = r'a'
+
+        lexer = tdparser.Lexer()
+        self.assertEqual(0, len(lexer.tokens))
+
+        lexer.register_token(Token)
+        self.assertEqual(1, len(lexer.tokens))
+
+    def test_register_token_override_regexp(self):
+        class Token(tdparser.Token):
+            regexp = r'a'
+
+        lexer = tdparser.Lexer()
+        self.assertEqual(0, len(lexer.tokens))
+
+        lexer.register_token(Token, r'b')
+        self.assertEqual(1, len(lexer.tokens))
+
+        token_class, match = lexer.tokens.get_token('a')
+        self.assertIsNone(token_class)
+        self.assertIsNone(match)
+
+        token_class, match = lexer.tokens.get_token('b')
+        self.assertEqual(Token, token_class)
+        self.assertIsNotNone(match)
+
+    def test_register_tokens(self):
+        class AToken(tdparser.Token):
+            regexp = r'a'
+
+        class BToken(tdparser.Token):
+            regexp = r'b'
+
+        lexer = tdparser.Lexer()
+        self.assertEqual(0, len(lexer.tokens))
+
+        lexer.register_tokens(AToken, BToken)
+        self.assertEqual(2, len(lexer.tokens))
+
+        token_class, match = lexer.tokens.get_token('a')
+        self.assertEqual(AToken, token_class)
+        self.assertIsNotNone(match)
+
+        token_class, match = lexer.tokens.get_token('b')
+        self.assertEqual(BToken, token_class)
+        self.assertIsNotNone(match)
 
 
 class LexTestCase(unittest.TestCase):

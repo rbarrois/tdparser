@@ -24,9 +24,9 @@ class TokenRegistry(object):
         
         Args:
             token (Token): the token class to register
-            regexp (compiled regexp): the regexp for that token
+            regexp (str): the regexp for that token
         """
-        self._tokens.append((token, regexp))
+        self._tokens.append((token, re.compile(regexp)))
 
     def matching_tokens(self, text, start=0):
         """Retrieve all token definitions matching the beginning of a text.
@@ -64,6 +64,9 @@ class TokenRegistry(object):
 
         return best_class, best_match
 
+    def __len__(self):
+        return len(self._tokens)
+
 
 class Lexer(object):
     """The core lexer.
@@ -93,8 +96,26 @@ class Lexer(object):
 
         super(Lexer, self).__init__(*args, **kwargs)
 
-    def register_token(self, token_class, regexp):
+    def register_token(self, token_class, regexp=None):
+        """Register a token class.
+
+        Args:
+            token_class (tdparser.Token): the token class to register
+            regexp (optional str): the regexp for elements of that token.
+                Defaults to the `regexp` attribute of the token class.
+        """
+        if regexp is None:
+            regexp = token_class.regexp
+
         self.tokens.register(token_class, regexp)
+
+    def register_tokens(self, *token_classes):
+        """Helper for registering a set of token classes.
+
+        Each token class should have a `regexp` attribute.
+        """
+        for token_class in token_classes:
+            self.register_token(token_class)
 
     def lex(self, text):
         """Split self.text into a list of tokens.
