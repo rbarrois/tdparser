@@ -50,11 +50,18 @@ class ArithmeticParserTestCase(unittest.TestCase):
             def led(self, left, context):
                 return left * context.expression(self.lbp)
 
+        class Divide(tdparser.Token):
+            lbp = 20  # Same precedence than multiplication
+
+            def led(self, left, context):
+                return left // context.expression(self.lbp)
+
         l = tdparser.Lexer(default_tokens=True)
         l.register_token(Integer, re.compile(r'[0-9]+'))
         l.register_token(Add, re.compile(r'\+'))
         l.register_token(Minus, re.compile(r'-'))
         l.register_token(Mult, re.compile(r'\*'))
+        l.register_token(Divide, re.compile(r'/'))
 
         self.lexer = l
 
@@ -86,6 +93,17 @@ class ArithmeticParserTestCase(unittest.TestCase):
         self.assertEqual(8, self.lexer.parse('--2 * -2 * -2'))
         self.assertEqual(8, self.lexer.parse('-(-2 * -2 * -2)'))
         self.assertEqual(-5, self.lexer.parse('1 + -2 * 3'))
+
+    def test_division(self):
+        self.assertEqual(2, self.lexer.parse('4 / 2'))
+        self.assertEqual(2, self.lexer.parse('5 / 2'))
+        self.assertEqual(2, self.lexer.parse('6 - 8 / 2'))
+        self.assertEqual(3, self.lexer.parse('3 * 2 / 2'))
+        self.assertEqual(3, self.lexer.parse('2 * 3 / 2'))
+        self.assertEqual(8, self.lexer.parse('8 / 2 * 2'))
+        self.assertEqual(8, self.lexer.parse('(8 / 2) * 2'))
+        self.assertEqual(2, self.lexer.parse('8 / (2 * 2)'))
+        self.assertEqual(2, self.lexer.parse('16/4/2'))
 
 
 class ParenthesizedParserTestCase(unittest.TestCase):

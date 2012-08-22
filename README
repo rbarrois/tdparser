@@ -57,16 +57,13 @@ Here is the definition for a simple arithmetic parser::
             return left * context.expression(self.lbp)
 
 
-    def make_lexer():
-        lexer = Lexer()
-        lexer.register_token(Integer, re.compile(r'\d+'))
-        lexer.register_token(Addition, re.compile(r'\+'))
-        lexer.register_token(Substraction, re.compile(r'-'))
-        lexer.register_token(Multiplication, re.compile(r'*'))
-        return lexer
+    lexer = Lexer()
+    lexer.register_token(Integer, re.compile(r'\d+'))
+    lexer.register_token(Addition, re.compile(r'\+'))
+    lexer.register_token(Substraction, re.compile(r'-'))
+    lexer.register_token(Multiplication, re.compile(r'*'))
 
     def parse(text):
-        lexer = make_lexer()
         return lexer.parse(text)
 
 Using it returns the expected value::
@@ -75,3 +72,35 @@ Using it returns the expected value::
     2
     >>> parse("1 + -2 * 3")
     -5
+
+Adding new tokens is straightforward::
+
+    class Division(Token):
+        lbp = 20  # Same precedence as Multiplication
+
+        def led(self, left, context):
+            return left // context.expression(self.lbp)
+
+    lexer.register_token(Division, re.compile(r'/'))
+
+And using it::
+
+    >>> parse("3 + 12 / 3")
+    7
+
+Let's add the exponentiation operator::
+
+    class Power(Token):
+        lbp = 30  # Higher than mult
+
+        def led(self, left, context):
+            # We pick expressions with a lower precedence, so that
+            # 2 ** 3 ** 2 computes as 2 ** (3 ** 2)
+            return left ** context.expression(self.lbp - 1)
+
+    lexer.register_token(Power, re.compile(r'\*\*'))
+
+And use it::
+
+    >>> parse("2 ** 3 ** 2")
+    512
