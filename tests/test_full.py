@@ -85,6 +85,7 @@ class ArithmeticParserTestCase(unittest.TestCase):
         self.assertEqual(8, self.lexer.parse('-2 * 2 * -2'))
         self.assertEqual(8, self.lexer.parse('--2 * -2 * -2'))
         self.assertEqual(8, self.lexer.parse('-(-2 * -2 * -2)'))
+        self.assertEqual(-5, self.lexer.parse('1 + -2 * 3'))
 
 
 class ParenthesizedParserTestCase(unittest.TestCase):
