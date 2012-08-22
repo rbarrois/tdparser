@@ -262,3 +262,7 @@ class AdvancedParserTestCase(unittest.TestCase):
         self.assertEqual(
             (4 + (1 + 2 * 3 * (4 + 5) + 6)) * 7 + 8,
             res)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()

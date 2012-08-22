@@ -22,3 +22,7 @@ class TokenTestCase(unittest.TestCase):
     def test_end_token(self):
         token = tdparser.EndToken()
         self.assertIn("End", repr(token))
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()

@@ -232,3 +232,7 @@ class LexTestCase(unittest.TestCase):
         lexer = tdparser.Lexer(with_parens=False)
         with self.assertRaises(ValueError):
             list(lexer.lex('foo'))
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()

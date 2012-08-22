@@ -179,3 +179,6 @@ class ParenthesizedParserTestCase(unittest.TestCase):
                 ')'],
             ')'], expr)
 
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
