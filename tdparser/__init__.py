@@ -13,8 +13,10 @@ from .topdown import (
     LeftParen, RightParen,
 
     Parser,
-    Lexer,
 
     ParserError, ParserSyntaxError,
 )
 
+from .lexer import (
+    Lexer,
+)

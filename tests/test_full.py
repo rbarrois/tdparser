@@ -56,7 +56,7 @@ class ArithmeticParserTestCase(unittest.TestCase):
             def led(self, left, context):
                 return left // context.expression(self.lbp)
 
-        l = tdparser.Lexer(default_tokens=True)
+        l = tdparser.Lexer(with_parens=True)
         l.register_token(Integer, re.compile(r'[0-9]+'))
         l.register_token(Add, re.compile(r'\+'))
         l.register_token(Minus, re.compile(r'-'))
@@ -129,7 +129,7 @@ class ParenthesizedParserTestCase(unittest.TestCase):
                 next_token = context.consume(RightParen)
                 return [self.text] + contents + [next_token.text]
 
-        l = tdparser.Lexer(default_tokens=False)
+        l = tdparser.Lexer(with_parens=False)
         l.register_token(LeftParen, re.compile(r'\('))
         l.register_token(RightParen, re.compile(r'\)'))
 
