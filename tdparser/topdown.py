@@ -30,6 +30,8 @@ class Token(object):
         http://javascript.crockford.com/tdop/tdop.html
     """
 
+    regexp = ''
+
     # Left binding power
     # Controls how much this token binds to a token on its right
     lbp = 0
