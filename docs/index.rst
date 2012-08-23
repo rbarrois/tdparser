@@ -101,8 +101,18 @@ Contents
    reference
    changelog
 
-References
-----------
+Links
+-----
+
+TDParser resources
+~~~~~~~~~~~~~~~~~~
+
+- Project home page on GitHub: https://github.com/rbarrois/tdparser
+- Documentation hosted on ReadTheDocs: http://tdparser.readthedocs.org/
+- Continuous integration on Travis-CI: http://travis-ci.org/rbarrois/tdparser
+
+External references
+~~~~~~~~~~~~~~~~~~~
 
 A few articles on Top-Down parsing (the algorithm used by tdparser):
 
