@@ -11,7 +11,7 @@ from .topdown import Parser, LeftParen, RightParen, EndToken
 
 class TokenRegistry(object):
     """Holds a bunch of token rules.
-    
+
     Attributes:
         _tokens ((Token, re) list): the registered tokens.
     """
@@ -21,7 +21,7 @@ class TokenRegistry(object):
 
     def register(self, token, regexp):
         """Register a token.
-        
+
         Args:
             token (Token): the token class to register
             regexp (str): the regexp for that token
@@ -30,12 +30,12 @@ class TokenRegistry(object):
 
     def matching_tokens(self, text, start=0):
         """Retrieve all token definitions matching the beginning of a text.
-        
+
         Args:
             text (str): the text to test
             start (int): the position where matches should be searched in the
                 string (see re.match(rx, txt, pos))
-            
+
         Yields:
             (token_class, re.Match): all token class whose regexp matches the
                 text, and the related re.Match object.

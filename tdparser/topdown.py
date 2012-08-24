@@ -134,6 +134,16 @@ class Parser(object):
             raise ValueError("No tokens provided.")
 
     def _forward(self):
+        """Advance to the next token.
+
+        Internal methods, updates:
+        - self.current_token
+        - self.current_pos
+
+        Raises:
+            ParserSyntaxError: when trying to advance beyond the end of the
+                token flow.
+        """
         try:
             self.current_token = next(self.tokens)
         except StopIteration:
@@ -152,6 +162,10 @@ class Parser(object):
 
         Returns:
             Token: the previous current token.
+
+        Raises:
+            ParserSyntaxError: If an expect_class is provided and the current
+                token doesn't match that class.
         """
         if expect_class and not isinstance(self.current_token, expect_class):
             raise ParserSyntaxError("Unexpected token at %d: got %r, expected %s" % (
