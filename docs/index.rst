@@ -99,6 +99,7 @@ Contents
    :maxdepth: 2
 
    reference
+   internals
    changelog
 
 Links

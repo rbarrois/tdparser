@@ -105,6 +105,32 @@ A token must inherit from the :class:`Token` class, and override a few elements 
         :return: The value this token evaluates to
 
 
+.. class:: LeftParen(Token)
+
+    A simple :class:`Token` subclass matching an opening bracket, ``(``.
+
+    When parsed, this will token will fetch the next subexpression, assert that
+    this expression is followed by a :class:`RightParen` token, and return the value
+    of the fetched expression.
+
+    .. attribute:: match
+
+
+        The token class to expect at the end of the subexpression.
+        This simplifies writing similar "bracket" tokens with different opening/closing
+        signs.
+
+        :type: :class:`Token`
+
+
+.. class:: RightParen(Token)
+
+    A simple, passive :class:`Token` (returns no value).
+
+    Used by the :class:`LeftParen` token to check that the sub-expression was properly
+    enclosed in left/right brackets.
+
+
 .. class:: EndToken(Token)
 
     This specific :class:`Token` marks the end of the input stream.
