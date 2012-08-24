@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+1.2.0 (planned)
+---------------
+
+*New:*
+
+    - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
+    - Add documentation for the top-down algorithm
+
 1.1.0 (current)
 ---------------
 
