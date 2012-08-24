@@ -5,6 +5,7 @@ tdparser
 This library aims to provide an efficient way to write simple lexer/parsers in Python, using the
 `Top-Down parsing algorithm <http://dl.acm.org/citation.cfm?id=512931>`_.
 
+Code is maintained on `GitHub <http://github.com/rbarrois/tdparser>`_, documentation is available on `ReadTheDocs <http://tdparser.readthedocs.org/>`_.
 
 Other python libraries provide parsing/lexing tools (see http://nedbatchelder.com/text/python-parsers.html for a few examples); distinctive features of tdparser are:
 
