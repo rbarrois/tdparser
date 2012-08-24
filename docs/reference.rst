@@ -313,3 +313,11 @@ In order to retrieve those tokens, the simplest way is to use the :class:`Lexer`
 
         :param str text: The text to lex
         :return: Iterable of :class:`Token` instances
+
+
+    .. method:: parse(self, text)
+
+        Shortcut method for lexing and parsing a text.
+
+        Will :meth:`lex` the text, then instantiate a :class:`Parser` with the
+        resulting :class:`Token` flow and call its :meth:`~Parser.parse` method.
