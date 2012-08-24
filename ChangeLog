@@ -9,8 +9,8 @@ ChangeLog
     - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
     - Add documentation for the top-down algorithm
 
-1.1.0 (current)
----------------
+1.1.0 (24/08/2012)
+------------------
 
 *New:*
 
