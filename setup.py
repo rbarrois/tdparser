@@ -4,7 +4,7 @@
 # Python3
 from __future__ import unicode_literals
 
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 import re
 
@@ -37,7 +37,7 @@ setup(
     keywords=['parser', 'lexer', 'token', 'topdown'],
     url="http://github.com/rbarrois/tdparser",
     download_url="http://pypi.python.org/pypi/tdparser/",
-    packages=find_packages(),
+    packages={'tdparser': 'tdparser'},
     install_requires=[
         'distribute',
     ],
