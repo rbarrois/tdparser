@@ -30,7 +30,7 @@ setup(
     name="tdparser",
     version=get_version(PACKAGE),
     author="Raphaël Barrois",
-    author_email="raphael.barrois@polytechnique.org",
+    author_email="raphael.barrois+tdparser@polytechnique.org",
     description=("A very simple parsing library, based on the Top-Down "
         "algorithm."),
     license="MIT",
