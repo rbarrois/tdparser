@@ -1,7 +1,10 @@
+# Temporary files
 .*.swp
 *.pyc
 *.pyo
-docs/_build/
+
+# Build-related files
+doc/_build/
 .coverage
 *.egg-info
 build/
