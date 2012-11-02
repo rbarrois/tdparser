@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Python3
-from __future__ import unicode_literals
-
 from setuptools import setup
 import os
 import re
@@ -37,7 +34,7 @@ setup(
     keywords=['parser', 'lexer', 'token', 'topdown'],
     url="http://github.com/rbarrois/tdparser",
     download_url="http://pypi.python.org/pypi/tdparser/",
-    packages={'tdparser': 'tdparser'},
+    packages=['tdparser'],
     install_requires=[
         'distribute',
     ],
