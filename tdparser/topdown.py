@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2010-2012 Raphaël Barrois
+# Copyright (c) 2010-2013 Raphaël Barrois
 
 """Basic implementation of top-down operator precedence.
 
