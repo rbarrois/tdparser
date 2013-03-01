@@ -20,6 +20,8 @@ Example
 
 Here is the definition for a simple arithmetic parser::
 
+    import re
+
     from tdparser import Lexer, Token
 
     class Integer(Token):
@@ -62,7 +64,7 @@ Here is the definition for a simple arithmetic parser::
     lexer.register_token(Integer, re.compile(r'\d+'))
     lexer.register_token(Addition, re.compile(r'\+'))
     lexer.register_token(Substraction, re.compile(r'-'))
-    lexer.register_token(Multiplication, re.compile(r'*'))
+    lexer.register_token(Multiplication, re.compile(r'\*'))
 
     def parse(text):
         return lexer.parse(text)
