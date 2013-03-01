@@ -11,7 +11,6 @@ In order to use it for parsing:
 
 from __future__ import unicode_literals
 
-import re
 
 
 class ParserError(Exception):
