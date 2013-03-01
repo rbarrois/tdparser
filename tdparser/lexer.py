@@ -6,7 +6,13 @@ from __future__ import unicode_literals
 
 import re
 
-from .topdown import Parser, LeftParen, RightParen, EndToken
+from .topdown import Error, Parser, LeftParen, RightParen, EndToken
+
+
+class LexerError(Error):
+    def __init__(self, *args, **kwargs):
+        self.position = kwargs.pop('position', None)
+        super(LexerError, self).__init__(*args, **kwargs)
 
 
 class TokenRegistry(object):
@@ -78,7 +84,7 @@ class Lexer(object):
       of the text
     - If this matches, add token_class(match) to the list of tokens and continue
     - Otherwise, if the first character is either ' ' or '\t', skip it
-    - Otherwise, raise a ValueError.
+    - Otherwise, raise a LexerError.
 
     Attributes:
         tokens (Token, re) list: The known tokens, as a (token class, regexp) list.
@@ -126,16 +132,21 @@ class Lexer(object):
         Yields:
             Token: the tokens generated from the given text.
         """
+        pos = 0
         while text:
             token_class, match = self.tokens.get_token(text)
             if token_class is not None:
                 matched_text = text[match.start():match.end()]
                 yield token_class(matched_text)
                 text = text[match.end():]
+                pos += match.end()
             elif text[0] in self.blank_chars:
                 text = text[1:]
+                pos += 1
             else:
-                raise ValueError('Invalid character %s in %s' % (text[0], text))
+                raise LexerError(
+                        'Invalid character %s in %s' % (text[0], text),
+                        position=pos)
 
         yield self.end_token()
 

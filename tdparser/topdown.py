@@ -12,8 +12,11 @@ In order to use it for parsing:
 from __future__ import unicode_literals
 
 
+class Error(Exception):
+    pass
 
-class ParserError(Exception):
+
+class ParserError(Error):
     pass
 
 

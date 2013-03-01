@@ -293,8 +293,18 @@ class LexTestCase(unittest.TestCase):
 
     def test_lex_invalid_char(self):
         lexer = tdparser.Lexer(with_parens=False)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(tdparser.LexerError) as cm:
             list(lexer.lex('foo'))
+        self.assertEqual(cm.exception.position, 0)
+
+    def test_lex_error_position(self):
+        class AToken(tdparser.Token):
+            regexp = r'a'
+        lexer = tdparser.Lexer(with_parens=False)
+        lexer.register_token(AToken)
+        with self.assertRaises(tdparser.LexerError) as cm:
+            list(lexer.lex('aaaabaaa'))
+        self.assertEqual(cm.exception.position, 4)
 
 
 if __name__ == '__main__':  # pragma: no cover
