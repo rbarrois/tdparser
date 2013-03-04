@@ -136,13 +136,12 @@ class ParenthesizedParserTestCase(unittest.TestCase):
         self.lexer = l
 
     def test_trivial(self):
-
         expr = self.lexer.parse('()')
         self.assertEqual(['(', ')'], expr)
 
-    def test_reads_a_single_expression(self):
-        expr = self.lexer.parse('()()')
-        self.assertEqual(['(', ')'], expr)
+    def test_sequential_expressions(self):
+        with self.assertRaises(tdparser.InvalidTokenError):
+            self.lexer.parse('()()')
 
     def test_nested(self):
         expr = self.lexer.parse('(())')

@@ -210,4 +210,7 @@ class Parser(object):
 
     def parse(self):
         """Parse the flow of tokens, and return their evaluation."""
-        return self.expression()
+        expr = self.expression()
+        if not isinstance(self.current_token, EndToken):
+            raise InvalidTokenError("Unconsumed trailing tokens.")
+        return expr
