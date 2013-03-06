@@ -9,6 +9,12 @@ ChangeLog
     - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
     - Add documentation for the top-down algorithm
 
+1.1.4 (current)
+---------------
+
+    - Fix handling of empty token flows
+    - More descriptive errors
+
 1.1.3 (02/11/2012)
 ------------------
 
