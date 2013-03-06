@@ -17,11 +17,15 @@ class Error(Exception):
 
 
 class ParserError(Error):
-    pass
+    """Any parsing-related error."""
 
 
-class ParserSyntaxError(ParserError):
-    pass
+class MissingTokensError(ParserError):
+    """When tokens are missing."""
+
+
+class InvalidTokenError(ParserError):
+    """Any error caused by an unexpected token."""
 
 
 class Token(object):
@@ -57,7 +61,7 @@ class Token(object):
         Returns:
             object: Parsed value for this token (a node, a value, ...)
         """
-        raise ParserSyntaxError(
+        raise InvalidTokenError(
             "Unexpected token %s at the left of an expression (pos: %d)" % (
             self, context.current_pos))
 
@@ -77,7 +81,7 @@ class Token(object):
             object built from this token, what is on its right, and
                 what was on its left.
         """
-        raise ParserSyntaxError(
+        raise InvalidTokenError(
             "Unexpected token %s in the middle of an expression (pos: %d)" % (
             self, context.current_pos))
 
@@ -110,10 +114,11 @@ class EndToken(Token):
     lbp = 0
 
     def nud(self, context):
-        raise ParserSyntaxError("Empty token flow.")
+        # An 'end' token should never begin an expression.
+        raise MissingTokensError("Empty token flow.")
 
     def led(self, left, context):
-        raise ParserSyntaxError("Unfinished token flow.")
+        raise MissingTokensError("Unfinished token flow.")
 
     def __repr__(self):
         return '<End>'
@@ -133,7 +138,7 @@ class Parser(object):
         try:
             self.current_token = next(self.tokens)
         except StopIteration:
-            raise ValueError("No tokens provided.")
+            raise MissingTokensError("No tokens provided.")
 
     def _forward(self):
         """Advance to the next token.
@@ -149,7 +154,7 @@ class Parser(object):
         try:
             self.current_token = next(self.tokens)
         except StopIteration:
-            raise ParserSyntaxError("Unexpected end of token stream at %d." %
+            raise MissingTokensError("Unexpected end of token stream at %d." %
                 self.current_pos)
         self.current_pos += 1
 
@@ -170,7 +175,7 @@ class Parser(object):
                 token doesn't match that class.
         """
         if expect_class and not isinstance(self.current_token, expect_class):
-            raise ParserSyntaxError("Unexpected token at %d: got %r, expected %s" % (
+            raise InvalidTokenError("Unexpected token at %d: got %r, expected %s" % (
                 self.current_pos, self.current_token, expect_class.__name__))
 
         current_token = self.current_token

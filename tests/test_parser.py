@@ -13,14 +13,14 @@ import tdparser
 class BaseParserTestCase(unittest.TestCase):
     """Tests for basic aspects of the parser."""
     def test_tokens_required(self):
-        self.assertRaises(ValueError, tdparser.Parser, [])
+        self.assertRaises(tdparser.MissingTokensError, tdparser.Parser, [])
 
     def test_consume_invalid_first_token(self):
         class SomeToken(tdparser.Token):
             pass
 
         parser = tdparser.Parser([SomeToken('foo'), tdparser.EndToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, parser.parse)
+        self.assertRaises(tdparser.InvalidTokenError, parser.parse)
 
     def test_consume_invalid_middle_token(self):
         class NumToken(tdparser.Token):
@@ -33,7 +33,7 @@ class BaseParserTestCase(unittest.TestCase):
                 return self.value
 
         parser = tdparser.Parser([NumToken('0'), NumToken('1'), tdparser.EndToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, parser.parse)
+        self.assertRaises(tdparser.InvalidTokenError, parser.parse)
 
     def test_consume_no_expect(self):
         a = tdparser.Token('a')
@@ -61,15 +61,23 @@ class BaseParserTestCase(unittest.TestCase):
         a = tdparser.Token('a')
         b = SubToken('b')
         parser = tdparser.Parser([a, b])
-        self.assertRaises(tdparser.ParserSyntaxError, parser.consume, SubToken)
+        self.assertRaises(tdparser.InvalidTokenError, parser.consume, SubToken)
 
 
 class BaseTokensTestCase(unittest.TestCase):
     """Tests behavior of base tokens."""
 
+    def test_no_tokens(self):
+        with self.assertRaises(tdparser.MissingTokensError):
+            tdparser.Parser([])
+
+    def test_empty_expression(self):
+        p = tdparser.Parser([tdparser.EndToken()])
+        self.assertRaises(tdparser.MissingTokensError, p.parse)
+
     def test_misparenthsized_expression(self):
         p = tdparser.Parser([tdparser.LeftParen(), tdparser.EndToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+        self.assertRaises(tdparser.MissingTokensError, p.parse)
 
     def test_end_at_beginning(self):
         class AToken(tdparser.Token):
@@ -77,7 +85,7 @@ class BaseTokensTestCase(unittest.TestCase):
 
         # Trying to parse "$ X"
         p = tdparser.Parser([tdparser.EndToken(), AToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+        self.assertRaises(tdparser.MissingTokensError, p.parse)
 
     def test_end_within_expression(self):
         class AToken(tdparser.Token):
@@ -86,7 +94,7 @@ class BaseTokensTestCase(unittest.TestCase):
 
         # Trying to parse "13 $ 13"
         p = tdparser.Parser([AToken(), tdparser.EndToken(), AToken()])
-        self.assertRaises(tdparser.ParserSyntaxError, p.expression, -1)
+        self.assertRaises(tdparser.MissingTokensError, p.expression, -1)
 
 
 
@@ -205,7 +213,7 @@ class AdvancedParserTestCase(unittest.TestCase):
             PlusToken(),
             tdparser.EndToken(),
         ])
-        self.assertRaises(tdparser.ParserSyntaxError, p.parse)
+        self.assertRaises(tdparser.MissingTokensError, p.parse)
 
     def test_nested_parenthesized_expression(self):
         class TimesToken(tdparser.Token):
