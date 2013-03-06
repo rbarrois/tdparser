@@ -148,7 +148,7 @@ class Parser(object):
         - self.current_pos
 
         Raises:
-            ParserSyntaxError: when trying to advance beyond the end of the
+            MissingTokensError: when trying to advance beyond the end of the
                 token flow.
         """
         try:
@@ -171,7 +171,7 @@ class Parser(object):
             Token: the previous current token.
 
         Raises:
-            ParserSyntaxError: If an expect_class is provided and the current
+            InvalidTokenError: If an expect_class is provided and the current
                 token doesn't match that class.
         """
         if expect_class and not isinstance(self.current_token, expect_class):

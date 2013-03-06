@@ -13,15 +13,26 @@ This document describes all components of the tdparser package:
 Exception classes
 -----------------
 
-.. exception:: ParserError
+.. exception:: Error
 
     This exception is the base class for all tdparser-related exceptions.
 
 
-.. exception:: ParserSyntaxError
+.. exception:: ParserError(Error)
 
     This exception will be raised whenever an unexpected token is encountered in
     the flow of tokens.
+
+
+.. exception:: MissingTokensError(ParserError)
+
+    This exception is raised when the parsing logic would expect more tokens than
+    are available
+
+.. exception:: InvalidTokenError(ParserError)
+
+    This exception is raised when an unexpected token is encountered while
+    parsing the data flow.
 
 
 Defining tokens
@@ -178,7 +189,7 @@ parsed expression.
         Consume the active :attr:`current_token`, and advance to the next token.
 
         If the :obj:`expect_class` is provided, this will ensure that the :attr:`current_token`
-        matches that token class, and raise a :exc:`ParserSyntaxError` otherwise.
+        matches that token class, and raise a :exc:`InvalidTokenError` otherwise.
 
         :param tdparser.Token expect_class: Optionnal :class:`Token` subclass that the
                                             :attr:`current_token` should be an instance of
