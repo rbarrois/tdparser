@@ -9,34 +9,34 @@ ChangeLog
     - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
     - Add documentation for the top-down algorithm
 
-1.1.4 (current)
----------------
+1.1.4 (2013-03-11)
+------------------
 
     - Fix handling of empty token flows
     - More descriptive errors
 
-1.1.3 (02/11/2012)
+1.1.3 (2012-11-02)
 ------------------
 
 *Bugfix:*
 
     - Fix setup.py (:func:`find_packages` was installing tests as well)
 
-1.1.2 (02/11/2012)
+1.1.2 (2012-11-02)
 ------------------
 
 *Bugfix:*
 
     - Swap doc/changelog.rst and ChangeLog for proper sdist compatibility
 
-1.1.1 (02/11/2012)
+1.1.1 (2012-11-02)
 ------------------
 
 *Bugfix:*
 
     - Fix documentation packaging (invalid paths in MANIFEST.in)
 
-1.1.0 (24/08/2012)
+1.1.0 (2012-08-24)
 ------------------
 
 *New:*
@@ -50,7 +50,7 @@ ChangeLog
 
     - Choose token by longest match
 
-1.0.0 (21/08/2012)
+1.0.0 (2012-08-21)
 ------------------
 
 First stable version of tdparser.
