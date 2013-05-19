@@ -9,6 +9,13 @@ ChangeLog
     - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
     - Add documentation for the top-down algorithm
 
+1.1.5 (2013-05-20)
+------------------
+
+*Bugfix:*
+
+    - #8: Fix packaging: stop installing the tests/ dir
+
 1.1.4 (2013-03-11)
 ------------------
 
