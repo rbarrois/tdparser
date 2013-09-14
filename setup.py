@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
+# This code is distributed under the two-clause BSD license.
+# Copyright (c) 2012-2013 Raphaël Barrois
 
-from distutils.core import setup
-from distutils import cmd
+from setuptools import setup
 import os
 import re
-import sys
 
 root_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -22,36 +22,6 @@ def get_version(package_name):
     return '0.1.0'
 
 
-class test(cmd.Command):
-    """Run the tests for this package."""
-    command_name = 'test'
-    description = 'run the tests associated with the package'
-
-    user_options = [
-        ('test-suite=', None, "A test suite to run (defaults to 'tests')"),
-    ]
-
-    def initialize_options(self):
-        self.test_runner = None
-        self.test_suite = None
-
-    def finalize_options(self):
-        self.ensure_string('test_suite', 'tests')
-
-    def run(self):
-        """Run the test suite."""
-        import unittest
-        if self.verbose:
-            verbosity=1
-        else:
-            verbosity=0
-
-        suite = unittest.TestLoader().loadTestsFromName(self.test_suite)
-        result = unittest.TextTestRunner(verbosity=verbosity).run(suite)
-        if not result.wasSuccessful():
-            sys.exit(1)
-
-
 PACKAGE = 'tdparser'
 
 
@@ -62,21 +32,25 @@ setup(
     author_email="raphael.barrois+tdparser@polytechnique.org",
     description=("A very simple parsing library, based on the Top-Down "
         "algorithm."),
-    license="MIT",
+    license="BSD",
     keywords=['parser', 'lexer', 'token', 'topdown'],
     url="http://github.com/rbarrois/tdparser",
     download_url="http://pypi.python.org/pypi/tdparser/",
     packages=['tdparser'],
+    setup_requires=[
+        'setuptools>=0.8',
+    ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
     ],
-    cmdclass={'test': test},
+    test_suite='tests',
 )
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# This code is distributed under the two-clause BSD license.
 # Copyright (c) 2010-2013 Raphaël Barrois
 
 """Basic implementation of top-down operator precedence.
