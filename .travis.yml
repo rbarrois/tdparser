@@ -6,9 +6,5 @@ python:
 script: "python setup.py test"
 install:
   - "if [[ $TRAVIS_PYTHON_VERSION = 2.6 ]]; then pip install unittest2 --use-mirrors; fi"
-  - pip install distribute
 notifications:
   email: false
-  irc: "irc.freenode.org#XelNext"
-
-
