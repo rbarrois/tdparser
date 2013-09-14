@@ -5,7 +5,7 @@
 # Python3
 from __future__ import unicode_literals
 
-__version__ = '1.1.5'
+__version__ = '1.1.6'
 __author__ = "Raphaël Barrois <raphael.barrois+tdparser@polytechnique.org>"
 
 

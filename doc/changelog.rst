@@ -9,6 +9,14 @@ ChangeLog
     - Batteries included (provide ready-to-use tokens for arithmetic evaluation, AST building, ...)
     - Add documentation for the top-down algorithm
 
+
+1.1.6 (2013-09-14)
+------------------
+
+*Misc:*
+
+    - Switch back to setuptools.
+
 1.1.5 (2013-05-20)
 ------------------
 
